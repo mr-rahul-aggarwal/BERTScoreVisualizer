@@ -8,8 +8,6 @@ For a more thorough explanation of how the software works and its use cases, ple
 
 [Click here to see a video demo of BERTScoreVisualizer](https://drive.google.com/file/d/1X0SjDpe928YHPZhadwaPLFO55gVIlWeP/view)
 
-Finally, our application is live at the following link: [sebiancoder.github.io/BERTScoreVisualizer](https://sebiancoder.github.io/BERTScoreVisualizer)
-
 ## Local Setup
 
 If you wish to run BERTScoreVisualizer locally, you can follow the following steps.
