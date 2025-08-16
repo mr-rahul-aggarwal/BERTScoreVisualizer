@@ -4,20 +4,27 @@ import { Button, TextField, Divider, Select, FormControl, InputLabel, MenuItem, 
 import { ArcherContainer, ArcherElement, ArcherArrow } from 'react-archer';
 
 function App() {
-
-  const BACKEND_URL = "https://bsv-backend--2xbnc8y.victoriousplant-d0803d1d.westus2.azurecontainerapps.io/";
+  // Backend URL can be overridden via env var for local dev: REACT_APP_BACKEND_URL
+  // Default to local Flask dev server. Trailing slashes are trimmed to avoid double slashes on requests.
+  const BACKEND_URL = (process.env.REACT_APP_BACKEND_URL || "http://127.0.0.1:5000").replace(/\/+$/, "");
   
   //available bert models
   const [availableModels, setAvailableModels] = useState();
 
   useEffect(() => {
     try {
-      fetch(BACKEND_URL + "/available_models").then(
-        response => {return response.json()}
-      ).then(data => {
-        console.log(data)
-        setAvailableModels(data);
-      });
+      fetch(BACKEND_URL + "/available_models")
+        .then(response => {
+          if (!response.ok) { throw new Error(`HTTP ${response.status}`); }
+          return response.json();
+        })
+        .then(data => {
+          console.log(data);
+          setAvailableModels(data);
+        })
+        .catch(err => {
+          console.error("Failed to fetch available models:", err);
+        });
     } catch (error) {
       console.error(error);
     }
@@ -69,13 +76,19 @@ function App() {
     const candTextArg = "candidate_text=" + encodeURIComponent(candidateText);
     const bertModelArg = "pretrained_model_name=" + encodeURI(selectedBertModel)
     
-    const BERTResponse = fetch(BACKEND_URL + "/bertscore?" + refTextArg + "&" + candTextArg + "&" + bertModelArg).then(
-      response => {return response.json()}
-    ).then(data => {
-      console.log(data)
-      setBERTScoreResults(data);
-      setBERTScoreDataPresent(true);
-    });
+    const BERTResponse = fetch(BACKEND_URL + "/bertscore?" + refTextArg + "&" + candTextArg + "&" + bertModelArg)
+      .then(response => {
+        if (!response.ok) { throw new Error(`HTTP ${response.status}`); }
+        return response.json();
+      })
+      .then(data => {
+        console.log(data)
+        setBERTScoreResults(data);
+        setBERTScoreDataPresent(true);
+      })
+      .catch(err => {
+        console.error("Failed to fetch BERTScore results:", err);
+      });
   }
 
   const getCurrentMoreInfoScore = () => {
